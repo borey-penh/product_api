@@ -4,46 +4,65 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // GET ALL
     public function index()
     {
-        //
+        return response()->json(Product::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // CREATE
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric'
+        ]);
+
+        $product = Product::create($request->all());
+
+        return response()->json($product);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // UPDATE (EDIT)
+    public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric'
+        ]);
+
+        $product->update([
+            'name' => $request->name,
+            'price' => $request->price
+        ]);
+
+        return response()->json([
+            'message' => 'Updated successfully',
+            'product' => $product
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // DELETE
+    public function destroy($id)
     {
-        //
-    }
+        $product = Product::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if (!$product) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        $product->delete();
+
+        return response()->json(['message' => 'Deleted']);
     }
 }

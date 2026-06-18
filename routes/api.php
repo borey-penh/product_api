@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
+use App\Http\Controllers\Api\ProductController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -30,3 +31,6 @@ Route::post('/products', function (Request $request) {
 
     return response()->json($product);
 });
+
+
+Route::apiResource('products', ProductController::class);
